@@ -132,6 +132,33 @@ function load(page) {
 load(1);
 </pre>
 
+It is easy then to rearrange the data in whatever format is needed. For example this code sample creates a map of the numbers of activities per day an dhour of the day:
+<pre class="code">
+    // build a map with the # of activities per day and hour
+    let r = data.reduce((acc, x) => {
+        let d = new Date(x.start_date_local);
+        day = d.getUTCDay();
+        hour = d.getUTCHours();
+        if (acc[day] != undefined) {
+            let h = acc[day];
+            if (h[hour] != undefined) {
+                h[hour] = h[hour] + 1;
+            } else {
+                h[hour] = 1;
+            }
+        } else {
+            let h = {};
+            h[hour] = 1;
+            acc[day] = h;
+        }
+        return acc;
+    }, {});
+</pre>
+Which can then be rendered:
+<a href="https://pledru.github.io/strava/dayHourHeatmap/heatmap.html" class="minibutton">View</a>
+<br>
+using a <a href="http://bl.ocks.org/tjdecke/5558084">Day / Hour Heatmap</a>
+
 <h3>Club members location</h3>
 <p>
 A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
