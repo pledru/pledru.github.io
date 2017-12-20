@@ -94,6 +94,44 @@ var req = https.request(options, resp => {
 req.end();
 </pre>
 
+Only a limited set of activities are retrieved for a given query. Pagination can be used to retrieve all the activities:
+<pre class="code">
+const https = require('https');
+
+const path = '/api/v3/athlete/activities?page=';
+
+const options = {
+    host: 'www.strava.com',
+    port: 443,
+    path: '/api/v3/athlete/activities',
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
+};
+
+let all = [];
+function load(page) {
+  options.path = path + page;
+  var req = https.request(options, function(resp) {
+      let data = '';
+      resp.on('data', d => { data += d; });
+      resp.on('end', () => {
+          let d = JSON.parse(data);
+          if (d.length == 0) {
+              let s = JSON.stringify(all);
+              console.log(s);
+              return;
+          }
+          for (var i = 0; i < d.length; i++) {
+              all.push(d[i]);
+          }
+          load(page+1);
+      });
+  });
+  req.end();
+}
+load(1);
+</pre>
+
 <h3>Club members location</h3>
 <p>
 A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
