@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      RMCC - RUSA Kilometers
+  </title>
+  <link rel="stylesheet" href="../application.css">
+
+<meta name="Description" content="RMCC - RUSA Kilometers">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+
+<body id="com">
+
+<div id="not-footer">
+  <div id="header">
+    <div class="clearfix">
+      <h1 class="site-logo"></h1>
+    </div>
+  </div>
+
+  <div id="content-wrapper">
+    <div class="site">
+      <div class="content-header small">
+        <h6 class="breadcrumbs">
+            RMCC - RUSA Kilometers
+        </h6>
+        <div class="search-form small right">
+        </div>
+      </div>
+      <div class="article js-hide-during-search">
+        <h2>RMCC - RUSA Kilometers</h2>
+        <div id="article-platform-nav">
+  <ul>
+    <li class="platform-mac">
+      <a href="#platform-mac" data-platform="mac">
+        mac
+      </a>
+    </li>
+    <li class="platform-windows">
+      <a href="#platform-windows" data-platform="windows">
+        windows
+      </a>
+    </li>
+    <li class="platform-linux">
+      <a href="#platform-linux" data-platform="linux">
+        linux
+      </a>
+    </li>
+    <li class="platform-all">
+      <a href="#platform-all" data-platform="all">
+        all
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+        <div class="article-body content-body wikistyle markdown-format">
+          <div class='intro'>
+
+          </div>
+
+          <div class="intro">
+
+<p>The <a href="rusa.org">RUSA</a> web site does not provide a programmatic interface, but the web pages are simple and easy to parse. With minimum effort, it is possible to transform the data is JSON format.</p>
+
+</div>
+
+<h3>Retrieve Club members data</h3>
+<p>
+Save the page with the list of users. Once the page is saved, a command such as:
+</p>
+
+<pre class="command-line">
+<span class="command">grep "resultsearch_PF.pl" rmcc.html  | awk -F "mid=" '{print $2}'</span>
+<span class="command"><em>></em> | awk -F "&sortby=" '{print $1}' > ids.txt</span>
+</pre>
+
+<p>extract the cyclists for the club, then for each cyclist, retrieve each page and parse user name and the award list. Render the data:</p>
+<a href="rmcc.html" class="minibutton">View RMCC Cyclists</a>
+<br>And for good comparison, our friends at SIR:<br>
+<a href="sir.html" class="minibutton">View SIR Cyclists</a>
+
+<br><br><br>
+<div class="fullscreen-overlay"></div>
+</body>
+</html>
+
