@@ -133,7 +133,25 @@ function load(page) {
 load(1);
 </pre>
 
-It is easy then to rearrange the data in whatever format is needed. For example this code sample creates a map of the numbers of activities per day and hour of the day:
+From then on, it is possible for example to extract the total commute distance for a given year (something not directly available from the Strava user interface) using a simple reduce operation:
+
+<pre class="code">
+const fs = require('fs');
+
+let f = process.argv.slice(2);
+fs.readFile(f[0], 'utf8', (err, contents) => {
+    let data = JSON.parse(contents);
+    let distance_commute = data.reduce((acc, x) => {
+        if (x.commute && new Date(x.start_date).getFullYear() == 2017) {
+            acc += parseInt(x.distance);
+        }
+        return acc;
+    }, 0);
+    console.log(distance_commute/1000 +' km');
+});
+</pre>
+
+A more complex recuce operation can be used to rearrange the data in whatever format is needed. For example this code sample creates a map of the numbers of activities per day and hour of the day:
 <pre class="code">
     // build a map with the # of activities per day and hour
     let r = data.reduce((acc, x) => {
