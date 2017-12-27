@@ -177,6 +177,17 @@ Which can then be rendered:
 <br>
 using a <a href="http://bl.ocks.org/tjdecke/5558084">Day / Hour Heatmap</a>
 
+<h3>Connected...</h3>
+<p>
+While probably a prohibitive approach as it loads one node at a time, this small <a href='https://github.com/pledru/strava/blob/master/connected/connected.js">program</a> finds the shortest 'distance' between two athletes. It uses a Breadth-First search approach where a queue is used to keep track of which node should be processed next.
+</p>
+<pre class="code">
+$ node connected.js 305389 4128933
+<span class="output">
+PATH: 305389,7681395,122858,4128933
+</span>
+</pre>
+
 <h3>Club members location</h3>
 <p>
 A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
