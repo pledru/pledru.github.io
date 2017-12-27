@@ -188,6 +188,44 @@ PATH: 305389,7681395,122858,4128933
 </span>
 </pre>
 
+<h3>U.S Activities</h3>
+<p>
+I tend to forget some of the rides and runs I did within the U.S. Displaying all my activities within the U.S will bring back some memories!!
+
+Using a <a hrep="http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922">US Map</a> and overlaying my activities is pretty straightforward.
+
+Read all the data, but filter out the points not within the U.S:</br>
+
+<pre class="code">
+var projection = d3.geo.albersUsa().translate([width/2, height/2]).scale([1000]);
+d3.json("all.json", rawData => {
+    let data = rawData.filter(d => projection([d.start_longitude, d.start_latitude]) != null);
+    ...
+});
+</pre>
+</p>
+For mouse events, display the name of the activity and its date and open a window with the activity:</br>
+<pre class="code">
+.on("mousedown", d => {
+    let url = 'https://www.strava.com/activities/' + d.id
+    window.open(url, d.name);
+})
+.on("mouseover", d => {
+    div.transition().duration(200).style("opacity", .9);
+    div.style('left', d3.event.pageX + 'px')
+       .style('top', d3.event.pageY - 28 + 'px')
+       .style('display', 'inline-block')
+       .html(new Date(d.start_date_local).toLocaleDateString() + ': ' + d.name)
+})
+.on("mouseout", d => {
+    div.transition().duration(500).style("opacity", 0);
+});
+</pre>
+Here is the result: <a href="map/index.html">Pascal's U.S activities</a>
+
+<br>
+So... I only remember of one activities in the North West (the one in Vancouver was the OpenStack conference, the one in Seattle was visiting Michelle at UW before she decided it rains too much there). One of the two activites in Nebraska was the first day of RAGBRAI (as I could not recharge my phone after...). The activity in New Mexico was the end of Mike's birthday after surviving the night in Ojo Caliente. One of the two activities in the North East was a quick run with Nicolas in Providence.<br>
+
 <h3>Club members location</h3>
 <p>
 A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
