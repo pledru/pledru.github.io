@@ -198,8 +198,8 @@ Read all the data, but filter out the points not within the U.S:</br>
 
 <pre class="code">
 var proj = d3.geo.albersUsa().translate([width/2, height/2]).scale([1000]);
-d3.json("all.json", rawData => {
-    let data = rawData.filter(d => proj([d.start_longitude, d.start_latitude]) != null);
+d3.json("all.json", raw => {
+    let data = raw.filter(d => proj([d.start_longitude, d.start_latitude]) != null);
     ...
 });
 </pre>
