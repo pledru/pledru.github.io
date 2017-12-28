@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      JS
+  </title>
+  <link rel="stylesheet" href="../application.css">
+
+<meta name="Description" content="JS">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+
+<body id="com">
+
+<div id="not-footer">
+  <div id="header">
+    <div class="clearfix">
+      <h1 class="site-logo"></h1>
+    </div>
+  </div>
+
+  <div id="content-wrapper">
+    <div class="site">
+      <div class="content-header small">
+        <h6 class="breadcrumbs">
+          JavaScript
+        </h6>
+        <div class="search-form small right">
+        </div>
+      </div>
+      <div class="article js-hide-during-search">
+        <h2>JavaScript</h2>
+        <div id="article-platform-nav">
+  <ul>
+    <li class="platform-mac">
+      <a href="#platform-mac" data-platform="mac">
+        mac
+      </a>
+    </li>
+    <li class="platform-windows">
+      <a href="#platform-windows" data-platform="windows">
+        windows
+      </a>
+    </li>
+    <li class="platform-linux">
+      <a href="#platform-linux" data-platform="linux">
+        linux
+      </a>
+    </li>
+    <li class="platform-all">
+      <a href="#platform-all" data-platform="all">
+        all
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+        <div class="article-body content-body wikistyle markdown-format">
+          <div class='intro'>
+
+          </div>
+
+          <div class="intro">
+
+<p>With minimum effort, it is possible to retrieve data programmatically using the Strava REST API.</p>
+
+</div>
+
+<h3>Request an access token</h3>
+<p>
+I needed recently to filter out duplicates in a list. Following the Array.prototype.filter() <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">spec</a>, I first came with this solution:
+
+<pre class="code">
+let r = a.filter((x => {
+    if (this.has(x)) {
+        return false;
+    }
+    this.add(x);
+    return true;
+}, new Set());
+</pre>
+
+which did not work :-( as <pre>this</pre> does not bind to the function for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>.
+
+Easy fix is to use in this case to a standard function:
+
+<pre class="code">
+let r = a.filter(function(x) {
+    if (this.has(x)) {
+        return false;
+    }
+    this.add(x);
+    return true;
+}, new Set());
+</pre>
+
+<br>
+Is there a way to make this code more compact:
+<pre class="code">
+let r = a.filter(function(x) {
+    return this.size != this.add(x).size;
+}, new Set());
+</pre>
+
+Now which method is the fastest? It seems to actually depend on the data. If there are few duplicates, it seems only calling the add method (solution 2) is the fastest solution as add does not need to look for the next "spot".
+</p>
+
+<div class="fullscreen-overlay"></div>
+</body>
+</html>
+
