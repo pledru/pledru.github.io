@@ -63,11 +63,11 @@
 
           <div class="intro">
 
-<p>With minimum effort, it is possible to retrieve data programmatically using the Strava REST API.</p>
+<p>Random JavaScript notes...</p>
 
 </div>
 
-<h3>Request an access token</h3>
+<h3>Arrow functions</h3>
 <p>
 I needed recently to filter out duplicates in a list. Following the Array.prototype.filter() <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">spec</a>, I first came with this solution:
 
@@ -81,9 +81,9 @@ let r = a.filter((x => {
 }, new Set());
 </pre>
 
-which did not work :-( as <pre>this</pre> does not bind to the function for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>.
+which did not work :-( as this does not bind to the function for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>.
 
-Easy fix is to use in this case to a standard function:
+Easy fix is to use a standard function in this case:
 
 <pre class="code">
 let r = a.filter(function(x) {
@@ -103,7 +103,7 @@ let r = a.filter(function(x) {
 }, new Set());
 </pre>
 
-Now which method is the fastest? It seems to actually depend on the data. If there are few duplicates, it seems only calling the add method (solution 2) is the fastest solution as add does not need to look for the next "spot".
+Now which method is the fastest? It seems to actually depend on the data. If there are few duplicates, it seems only calling the add method (solution 2) is the fastest solution as add does not need to look for the next "spot" (the difference seems very small...).
 </p>
 
 <div class="fullscreen-overlay"></div>
