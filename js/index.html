@@ -81,7 +81,7 @@ let r = a.filter((x => {
 }, new Set());
 </pre>
 
-which did not work :-( as this does not bind to the function for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>.
+which did not work :-( as <code>this</code> does not bind to the function for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>.
 
 Easy fix is to use a standard function in this case:
 
