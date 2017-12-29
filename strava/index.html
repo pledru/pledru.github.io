@@ -223,8 +223,8 @@ For mouse events, display the name of the activity and its date and open a windo
 </pre>
 Here is the result: <a href="map/index.html">Pascal's U.S activities</a>
 <br><br>
-So... I only remember one of the activities in the North West (the one in Vancouver was the OpenStack conference, the one in Seattle was visiting Michelle at UW before she decided it rains too much there). One of the two activites in Nebraska was the first day of <a href='https://ragbrai.com/'>RAGBRAI</a> (as I could not recharge my phone after...). The activity in New Mexico was the end of Mike's birthday after surviving the night in Ojo Caliente. One of the two activities in the North East was a quick run with Nicolas in Providence...<br>
-A small refinement calculates the <a href="map2/index.html">states</a> the activities are in using the d3 polygon library
+So... I only remember one of the activities in the North West (the one in Vancouver was the OpenStack conference, the one in Seattle was visiting Michelle at UW before she decided it rains too much there). One of the two activites in Nebraska was the first day of <a href='https://ragbrai.com/'>RAGBRAI</a> (as I could not recharge my phone after...). The activity in New Mexico was the end of Mike's birthday after surviving the night in Ojo Caliente. One of the two activities in the North East was a quick run with Nicolas in Providence...<br><br>
+A small refinement calculates the <a href="map2/index.html">states</a> the activities are in using the d3 polygon library:
 <pre class="code">
 d3.json("all.json", rawActivities => {
     let activities = rawActivities.filter(d => {
