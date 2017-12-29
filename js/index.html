@@ -106,6 +106,34 @@ let r = a.filter(function(x) {
 Now which method is the fastest? It seems to actually depend on the data. If there are few duplicates, it seems only calling the add method (solution 2) is the fastest solution as add does not need to look for the next "spot" (the difference seems very small...).
 </p>
 
+<h3>Array reduce</h3>
+<p>
+most example using the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce">Array.prototype.reduce()</a> method use a number for the accumulator. For example:
+<pre class="code">
+let data = [
+  { year: 2017, dist: 10},
+  { year: 2016, dist: 10},
+  { year: 2017, dist: 15}
+];
+
+let r = data.reduce((acc, x) => {
+    if (x.year == 2017) acc += x.dist;
+    return acc;
+}, 0);
+</pre>
+or the slightly more compact version:
+<pre class="code">
+r = data.reduce((acc, x) => x.year == 2017 ? acc + x.dist : acc, 0);
+</pre>
+but any object can be used as the accumulator. For example to add the above distances per year:
+<pre class="code">
+r = data.reduce((acc, x) => {
+    acc[x.year] = acc[x.year] == undefined ? x.dist : acc[x.year] + x.dist;
+    return acc;
+}, {});
+</pre>
+</p>
+
 <div class="fullscreen-overlay"></div>
 </body>
 </html>
