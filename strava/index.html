@@ -224,6 +224,34 @@ For mouse events, display the name of the activity and its date and open a windo
 Here is the result: <a href="map/index.html">Pascal's U.S activities</a>
 <br><br>
 So... I only remember one of the activities in the North West (the one in Vancouver was the OpenStack conference, the one in Seattle was visiting Michelle at UW before she decided it rains too much there). One of the two activites in Nebraska was the first day of <a href='https://ragbrai.com/'>RAGBRAI</a> (as I could not recharge my phone after...). The activity in New Mexico was the end of Mike's birthday after surviving the night in Ojo Caliente. One of the two activities in the North East was a quick run with Nicolas in Providence...<br>
+A small refinement calculates the <a href="map2/index.html">states</a> the activities are in using the d3 polygon library
+<pre class="code">
+d3.json("all.json", rawActivities => {
+    let activities = rawActivities.filter(d => {
+        let point = [d.start_longitude, d.start_latitude];
+        return projection(point) != null;
+    });
+
+    d3.json("us-states.json", states => {
+        activities.forEach(p => {
+            states.features.forEach(d => {
+                let point = [p.start_longitude, p.start_latitude];
+                if (d.geometry.type == 'Polygon') {
+                    if (d3.polygonContains(d.geometry.coordinates[0], point)) {
+                        d.properties.visited = true;
+                    }
+                } else if (d.geometry.type == 'MultiPolygon') {
+                    for (var j = 0; j < d.geometry.coordinates.length; j++) {
+                        if (d3.polygonContains(d.geometry.coordinates[j][0], point)) {
+                            d.properties.visited = true;
+                        }
+                    }
+                }
+        });
+    });
+    ...
+});
+</pre>
 
 <h3>Club members location</h3>
 <p>
