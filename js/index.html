@@ -169,14 +169,16 @@ Possible solution:
 const keys = Object.keys;
 const max = d3.max(keys(activities).map(x => parseInt(x)));
 const min = d3.min(keys(activities).map(x => parseInt(x)));
-const range = d3.range(min, max + 1);
+const range = d3.range(min, max +1 );
 
-let types = new Set();
-keys(activities).forEach(x => keys(activities[x]).forEach(type => types.add(type)));
-types = Array.from(types);
+const types = activities => {
+    let t = new Set();
+    keys(activities).forEach(x => keys(activities[x]).forEach(type => t.add(type)));
+    return Array.from(t);
+}
 
 let data = {};
-types.forEach(type => data[type] = []);
+types(activities).forEach(type => data[type] = []);
 range.forEach(d => {
     keys(activities[d]).forEach(type => {
         data[type].push({date: d, distance: activities[d][type]});
