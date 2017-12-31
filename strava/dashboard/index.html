@@ -175,7 +175,7 @@ var y;
 var svg2;
 var rect;
 var activities_type = ["Ride", "Run", "NordicSki", "Hike"];
-var colorsB = ["#b33040", "#d25c4d", "#f2b447", "#d9d574"];
+var colorsB = ["#8b0000", "#d25c4d", "#f2b447", "#d9d574"];
 
 /*
  * Convert data per year and activity type.
@@ -488,7 +488,7 @@ function resetChart(state) {
 
     activityX.remove();
 
-    datac =  toYearFormat(activities, state);
+    datac = toYearFormat(activities, state);
     for (var i = 1; i < datac.length; i++) {
         for (var j = 0; j < activities_type.length; j++) {
             datac[i][activities_type[j]] += datac[i-1][activities_type[j]];
@@ -498,11 +498,11 @@ function resetChart(state) {
     xc.domain(datac.map(d => d.date));
     // should try to use the d3.max function here...
     var maxd = 0;
-    for (var i = 1; i < datac.length; i++) {
-        for (var j = 0; j < activities_type.length; j++) {
-            maxd = Math.max(maxd, datac[i][activities_type[j]]);
-        }
-    }
+    datac.forEach(d => {
+        activities_type.forEach(a => {
+            maxd = Math.max(maxd, d[a]);
+        });
+    });
     yc.domain([0, maxd]);
 
     svg3.select(".x.axis")
