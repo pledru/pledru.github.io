@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3-polygon.v1.min.js"></script>
+<style type="text/css">
+
+.axis {
+  font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+path { 
+    stroke: black;
+    stroke-width: 2;
+    fill: none;
+}
+
+path:hover {
+    fill-opacity: .7;
+}
+
+div.tooltip {   
+    position: absolute;           
+    text-align: center;           
+    width: 160px;                  
+    height: 30px;                 
+    padding: 2px;             
+    font: 12px sans-serif;        
+    background: white;   
+    border: 0px;      
+    border-radius: 8px;           
+    pointer-events: none;         
+}
+        
+body {
+    font: 11px sans-serif;
+}
+        
+</style>
+</head>
+<body>
+
+Activities Per State: <a href="javascript:resetBar();resetChart();">reset</a>
+<table>
+  <tr>
+    <td>
+      <div id='us-map'></div>
+    </td>
+    <td style='vertical-align: top'>
+      <br><br>
+      <div id='bartitle'>Distance Per Year - All States</div>
+      <div id='bar'></div>
+      <br><br>
+      <div id='linetitle'>Cumulative distances - All States</div>
+      <div id='line'></div>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+var width = 780;
+var height = 480;
+
+var projection = d3.geo.albersUsa()
+   .translate([width/2, height/2])
+   .scale([1000]);
+        
+var path = d3.geo.path().projection(projection);
+		
+var color = d3.scale.linear()
+    .range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)","rgb(217,91,67)"]);
+
+var svg = d3.select("#us-map")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+        
+var tooltip = d3.select("#us-map").append("div").attr("class", "tooltip").style("opacity", 0);
+
+let activities = null;
+
+d3.json("all.json", rawActivities => {
+    activities = rawActivities.filter(d => projection([d.start_longitude, d.start_latitude]) != null);
+
+    d3.json("us-states.json", states => {
+        activities.forEach(p => {
+            states.features.forEach(d => {
+                let point = [p.start_longitude, p.start_latitude];
+                if (d.geometry.type == 'Polygon') {
+                    //if (d3.polygonContains(d.geometry.coordinates[0], point) || point[0] == -122.48) {
+                    if (d3.polygonContains(d.geometry.coordinates[0], point)) {
+                        d.properties.visited = true;
+                        p.state = d.properties.name;
+                    }
+                } else if (d.geometry.type == 'MultiPolygon') {
+                    for (var j = 0; j < d.geometry.coordinates.length; j++) {
+                        if (d3.polygonContains(d.geometry.coordinates[j][0], point)) {
+                            d.properties.visited = true;
+                            p.state = d.properties.name;
+                        }
+                    }
+                }
+        });
+    });
+
+    // missing Hopland?
+    for (var i = 0; i < activities.length; i++) {
+        if (activities[i].name == 'Hopland 400km') {
+            activities[i].state = 'California';
+        }
+    }
+
+    svg.selectAll("path")
+	.data(states.features)
+	.enter()
+	.append("path")
+	.attr("d", path)
+	.style("stroke", "#fff")
+	.style("stroke-width", "1")
+	.style("fill", d => {
+            if (d.properties.visited) {
+	        return "rgb(84,36,55)";
+            } else {
+	        return "rgb(213,222,217)";
+            }
+        })
+        .on("mousedown", d => {
+            resetBar(d.properties.name);
+            resetChart(d.properties.name);
+        });
+		 
+    svg.selectAll("circle")
+	.data(activities)
+	.enter()
+	.append("circle")
+	.attr("cx", d => projection([d.start_longitude, d.start_latitude])[0])
+	.attr("cy", d => projection([d.start_longitude, d.start_latitude])[1])
+	.attr("r", d => Math.sqrt(4) * 4)
+	.style("fill", "rgb(217,91,67)")	
+	.style("opacity", 0.85)	
+        .on("mousedown", d => {
+            let url = 'https://www.strava.com/activities/' + d.id
+            window.open(url, d.name);
+        })
+	.on("mouseover", d => {      
+    	    tooltip.transition().duration(200).style("opacity", .9);      
+            tooltip.style('left', d3.event.pageX + 'px')
+               .style('top', d3.event.pageY - 28 + 'px')
+               .style('display', 'inline-block')
+               .html(new Date(d.start_date_local).toLocaleDateString() + ': ' + d.name)
+	})   
+        .on("mouseout", d => {       
+            tooltip.transition().duration(500).style("opacity", 0);   
+        });
+
+    });  
+    displayBar();
+    displayChart();
+});
+
+function displayMap() {
+}
+
+var xAxis;
+var yAxis;
+var x;
+var y;
+var svg2;
+var rect;
+var activities_type = ["Ride", "Run", "NordicSki", "Hike"];
+var colorsB = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
+
+/*
+ * Convert data per year and activity type.
+ */
+function toYearFormat(activities, state) {
+    var reducer = {};
+    //[2013, 2014, 2015, 2016, 2017, 2018].forEach(x=> {
+    [2013, 2014, 2015, 2016, 2017].forEach(x=> {
+        reducer[x] = {};
+        activities_type.forEach( y => reducer[x][y] = 0 );
+    });
+
+    var activitiesPerYear = activities.reduce((acc, x) => {
+        let year = new Date(x.start_date_local).getFullYear();
+        if (state == undefined || state == x.state) {
+            acc[year][x.type] += x.distance;
+        }
+        return acc;
+    }, reducer);
+
+    for (k in activitiesPerYear) {
+        for (typeX in activitiesPerYear[k]) {
+            activitiesPerYear[k][typeX] = activitiesPerYear[k][typeX] / 1000;
+        }
+    }
+    data0 = [];
+    for (k in activitiesPerYear) {
+        var xx1 = {date: new Date(k, 0)};
+        for (typeX in activitiesPerYear[k]) {
+           xx1[typeX] = activitiesPerYear[k][typeX];
+        }
+        data0.push(xx1);
+    }
+    return data0;
+}
+
+/*
+ * Convert data to stack format.
+ */
+function toStackFormat(activities, state) {
+    // convert data into stack format
+    // see this example: http://bl.ocks.org/mstanaland/6100713
+
+    data0 = toYearFormat(activities, state);
+    var ddd = activities_type.map(function(at) {
+        return data0.map(function(d) {
+            return {x: d.date, y: +d[at]};
+        });
+    });
+    var data = d3.layout.stack()(ddd);
+
+    return data;
+}
+
+/*
+ * The bar chart...
+ */
+function displayBar(state) {
+    var margin = {top: 20, right: 110, bottom: 60, left: 40},
+        width = 350 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    svg2 = d3.select('#bar').append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', 
+              'translate(' + margin.left + ',' + margin.top + ')');
+    
+    x = d3.scale.ordinal().rangeRoundBands([0, width - 10], .05);
+    y = d3.scale.linear().range([height, 0]);
+
+    // activities type are: Ride, Run, NordicSki, Hike
+
+    xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickFormat(d3.time.format('%Y'));
+
+    yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .ticks(10);
+
+    var data = toStackFormat(activities, state);
+
+    x.domain(data[0].map(d => d.x));
+    y.domain([0, d3.max(data, d => { return d3.max(d, d => { return d.y0 + d.y; }); })]);
+    
+    svg2.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(xAxis)
+        .selectAll('text');
+    
+    svg2.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+        .append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '.71em')
+        .style('text-anchor', 'end')
+        .text('Distance (kilometers)');
+
+    var groups = svg2.selectAll("bar")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "bar")
+        .style("fill", function(d, i) { return colorsB[i]; });
+
+    rect = groups.selectAll("rect")
+        .data(d => d)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return x(d.x); })
+        .attr("y", function(d) { return y(d.y0 + d.y); })
+        .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); })
+        .attr("width", x.rangeBand())
+        .on("mouseover", d => { 
+    	    tooltip.transition().duration(200).style("opacity", .9);      
+            tooltip.style('left', d3.event.pageX + 'px')
+               .style('top', d3.event.pageY - 28 + 'px')
+               .style('display', 'inline-block')
+               .html(parseInt(d.y) + ' km')
+        })
+        .on("mouseout", () => { 
+            tooltip.transition().duration(500).style("opacity", 0);   
+        });
+
+    var legend = svg2.selectAll(".legend")
+        .data(colorsB)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => { return "translate(30," + i * 19 + ")"; });
+ 
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", (d, i) => {return colorsB.slice().reverse()[i];});
+ 
+    legend.append("text")
+        .attr("x", width + 5)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text((d, i) => activities_type[activities_type.length-1-i])
+}
+
+function resetBar(state) {
+    var margin = {top: 20, right: 110, bottom: 60, left: 40},
+        width = 350 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    title = document.getElementById('bartitle');
+    title.innerHTML = 'Distance Per Year - ' + state;
+    if (state == undefined) {
+        title.innerHTML = 'Distance Per Year - All States';
+    }
+
+    rect.remove();
+
+    var data = toStackFormat(activities, state);
+
+    x.domain(data[0].map(d => d.x));
+    y.domain([0, d3.max(data, d => { return d3.max(d, d => { return d.y0 + d.y; }); })]);
+    
+    svg2.select(".x.axis")
+        .transition()
+        .duration(750)
+        .call(xAxis);
+
+    svg2.select(".y.axis")
+        .transition()
+        .duration(750)
+        .call(yAxis);
+
+    var groups = svg2.selectAll("bar")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "bar")
+        .style("fill", function(d, i) { return colorsB[i]; });
+
+    rect = groups.selectAll("rect")
+        .data(d => d)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return x(d.x); })
+        .attr("y", function(d) { return y(d.y0 + d.y); })
+        .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); })
+        .attr("width", x.rangeBand())
+        .on("mouseover", d => { 
+    	    tooltip.transition().duration(200).style("opacity", .9);      
+            tooltip.style('left', d3.event.pageX + 'px')
+               .style('top', d3.event.pageY - 28 + 'px')
+               .style('display', 'inline-block')
+               .html(parseInt(d.y) + ' km')
+        })
+        .on("mouseout", () => { 
+            tooltip.transition().duration(500).style("opacity", 0);   
+        });
+}
+
+var xAxisc;
+var yAxisc;
+var activityX;
+var svg3;
+var xc;
+var yc;
+/*
+ *
+ */
+function displayChart() {
+    var margin = {top: 20, right: 110, bottom: 60, left: 40},
+        width = 350 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    xc = d3.scale.ordinal().rangeRoundBands([0, width - 10], .05);
+    yc = d3.scale.linear().range([height, 0]);
+
+    xAxisc = d3.svg.axis().scale(xc)
+        .orient("bottom")
+        .tickFormat(d3.time.format('%Y'));
+
+    yAxisc = d3.svg.axis().scale(yc)
+        .orient("left").ticks(5);
+
+    var valueline = d3.svg.line()
+        .x(d => xc(d.date))
+        .y(d => yc(d.distance));
+
+    svg3 = d3.select("#line")
+        .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", 
+                  "translate(" + margin.left + "," + margin.top + ")");
+
+    datac =  toYearFormat(activities);
+    for (var i = 1; i < datac.length; i++) {
+        for (var j = 0; j < activities_type.length; j++) {
+            datac[i][activities_type[j]] += datac[i-1][activities_type[j]];
+        }
+    }
+
+    xc.domain(datac.map(d => d.date));
+    // should try to use the d3.max function here...
+    var maxd = 0;
+    for (var i = 1; i < datac.length; i++) {
+        for (var j = 0; j < activities_type.length; j++) {
+            maxd = Math.max(maxd, datac[i][activities_type[j]]);
+        }
+    }
+    yc.domain([0, maxd]);
+
+    // build the data in date,distance format for each activity
+    var linesData = {};
+    for (var i = 0; i < activities_type.length; i++) {
+        linesData[activities_type[i]] = [];
+        for (var j = 0; j < datac.length; j++) {
+            var p = datac[j][activities_type[i]];
+            linesData[activities_type[i]].push({date: datac[j].date, distance: p});
+        }
+    }
+
+    var activity = svg3.selectAll(".activity")
+        .data(activities_type)
+        .enter().append("g")
+        .attr("class", "activity");
+    activityX = activity;
+
+    activity.append("path")
+        .attr("class", "line")
+        .attr("d", d => valueline(linesData[d]))
+        .style("stroke", (d, i) => { return colorsB[i]});
+
+    svg3.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxisc);
+
+    svg3.append('g')
+        .attr('class', 'y axis')
+        .call(yAxisc)
+        .append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '.71em')
+        .style('text-anchor', 'end')
+        .text('Distance (kilometers)');
+
+}
+
+function resetChart(state) {
+    var margin = {top: 20, right: 110, bottom: 60, left: 40},
+        width = 350 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    title = document.getElementById('linetitle');
+    title.innerHTML = 'Cumulative distances - ' + state;
+    if (state == undefined) {
+        title.innerHTML = 'Cumulative distances - All States';
+    }
+
+    var valueline = d3.svg.line()
+        .x(d => xc(d.date))
+        .y(d => yc(d.distance));
+
+    activityX.remove();
+
+    datac =  toYearFormat(activities, state);
+    for (var i = 1; i < datac.length; i++) {
+        for (var j = 0; j < activities_type.length; j++) {
+            datac[i][activities_type[j]] += datac[i-1][activities_type[j]];
+        }
+    }
+
+    xc.domain(datac.map(d => d.date));
+    // should try to use the d3.max function here...
+    var maxd = 0;
+    for (var i = 1; i < datac.length; i++) {
+        for (var j = 0; j < activities_type.length; j++) {
+            maxd = Math.max(maxd, datac[i][activities_type[j]]);
+        }
+    }
+    yc.domain([0, maxd]);
+
+    svg3.select(".x.axis")
+        .transition()
+        .duration(750)
+        .call(xAxisc);
+
+    svg3.select(".y.axis")
+        .transition()
+        .duration(750)
+        .call(yAxisc);
+
+    // build the data in date,distance format for each activity
+    var linesData = {};
+    for (var i = 0; i < activities_type.length; i++) {
+        linesData[activities_type[i]] = [];
+        for (var j = 0; j < datac.length; j++) {
+            var p = datac[j][activities_type[i]];
+            linesData[activities_type[i]].push({date: datac[j].date, distance: p});
+        }
+    }
+
+    var activity = svg3.selectAll(".activity")
+        .data(activities_type)
+        .enter().append("g")
+        .attr("class", "activity");
+
+    activityX = activity;
+
+    activity.append("path")
+        .attr("class", "line")
+        .attr("d", d => valueline(linesData[d]))
+        .style("stroke", (d, i) => { return colorsB[i]});
+}
+
+</script>
+</body>
+</html>
+
