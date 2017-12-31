@@ -134,6 +134,32 @@ r = data.reduce((acc, x) => {
 </pre>
 </p>
 
+<h3>D3 on the server side...</h3>
+<p>
+It is possible to use D3 for testing (or whatever other purposes) on the server. Install D3 as a npm package such as:
+<pre class="command-line">
+$ npm install d3
+<span class="output">/Users/user
+└── d3@4.12.2</span>
+</pre>
+Then for example to generates the range of the years some data are in:
+<pre class="code">
+d3 = require('d3');
+fs = require('fs');
+
+fs.readFile('all.json', 'utf8', (err, activities) => {
+    activities = JSON.parse(activities);
+
+    const d = x => new Date(x.start_date_local);
+    const dates = activities.map(x => d(x));
+
+    const max = d3.max(dates).getFullYear();
+    const min = d3.min(dates).getFullYear();
+    const range = d3.range(min, max + 1);
+});
+</pre>
+</p>
+
 <div class="fullscreen-overlay"></div>
 </body>
 </html>
