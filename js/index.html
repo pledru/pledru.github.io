@@ -142,8 +142,9 @@ $ npm install d3
 <span class="output">/Users/user
 └── d3@4.12.2</span>
 </pre>
-Then for example to generates the range of the years some data are in:
+Then for example to generates the range of the years some data are in and assert the values:
 <pre class="code">
+assert = require('assert');
 d3 = require('d3');
 fs = require('fs');
 
@@ -156,6 +157,8 @@ fs.readFile('all.json', 'utf8', (err, activities) => {
     const max = d3.max(dates).getFullYear();
     const min = d3.min(dates).getFullYear();
     const range = d3.range(min, max + 1);
+
+    assert.deepEqual(range, [2013, 2014, 2015, 2016, 2017]);
 });
 </pre>
 </p>
