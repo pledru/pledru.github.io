@@ -134,6 +134,57 @@ r = data.reduce((acc, x) => {
 </pre>
 </p>
 
+<h3>Data transformation...</h3>
+<p>
+How to transform data from the format:
+
+<pre class="code">
+{ '2013': { Ride: 394381, Run: 0 },
+  '2014': { Ride: 7935158, Run: 270790 },
+  '2015': { Ride: 8059335, Run: 392350 },
+  '2016': { Ride: 9031185, Run: 165617 },
+  '2017': { Ride: 13302601, Run: 150363 } }
+</pre>
+
+To the format:
+
+<pre class="code">
+{  Ride:
+   [ { date: 2013, distance: 394381 },
+     { date: 2014, distance: 7935158 },
+     { date: 2015, distance: 8059335 },
+     { date: 2016, distance: 9031185 },
+     { date: 2017, distance: 13302601 } ],
+  Run:
+   [ { date: 2013, distance: 0 },
+     { date: 2014, distance: 270790 },
+     { date: 2015, distance: 392350 },
+     { date: 2016, distance: 165617 },
+     { date: 2017, distance: 150363 } ] }
+</pre>
+
+Possible solution:
+
+<pre class="code">
+const keys = Object.keys;
+const max = d3.max(keys(activities).map(x => parseInt(x)));
+const min = d3.min(keys(activities).map(x => parseInt(x)));
+const range = d3.range(min, max + 1);
+
+let types = new Set();
+keys(activities).forEach(x => keys(activities[x]).forEach(type => types.add(type)));
+types = Array.from(types);
+
+let data = {};
+types.forEach(type => data[type] = []);
+range.forEach(d => {
+    keys(activities[d]).forEach(type => {
+        data[type].push({date: d, distance: activities[d][type]});
+    });
+});
+</pre>
+</p>
+
 <h3>D3 on the server side...</h3>
 <p>
 It is possible to use D3 for testing (or whatever other purposes) on the server. Install D3 as a npm package such as:
