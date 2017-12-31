@@ -169,7 +169,7 @@ Possible solution:
 const keys = Object.keys;
 const max = d3.max(keys(activities).map(x => parseInt(x)));
 const min = d3.min(keys(activities).map(x => parseInt(x)));
-const range = d3.range(min, max +1 );
+const range = d3.range(min, max + 1);
 
 const types = activities => {
     let t = new Set();
