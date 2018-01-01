@@ -241,7 +241,7 @@ d3.json("all.json", rawActivities => {
                         d.properties.visited = true;
                     }
                 } else if (d.geometry.type == 'MultiPolygon') {
-                    for (var j = 0; j < d.geometry.coordinates.length; j++) {
+                    for (var j = 0; j &lt; d.geometry.coordinates.length; j++) {
                         if (d3.polygonContains(d.geometry.coordinates[j][0], point)) {
                             d.properties.visited = true;
                         }
