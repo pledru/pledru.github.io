@@ -68,24 +68,24 @@ An access token needs to be set up first under a <a href="https://www.strava.com
 <p>
 Data can be retrieved in JSON format with a HTTPS request. The simple <a href="https://nodejs.org">Node.js</a> program below retrieves the latest's activities of the current user:
 </p>
-<pre class="code"><code>
-const https = require('https');
+<pre class="code">
+const https = require(&#39;https&#39;
 
 var options = {
-    host: 'www.strava.com',
+    host: &#39;www.strava.com&#39;
     port: 443,
-    path: '/api/v3/athlete/activities',
-    method: 'GET',
-    headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
+    path: &#39;api/v3/athlete/activities&#39;
+    method: &#39;GET&#39;
+    headers: { &#39;Authorization&#39; &#39;Bearer &lt;ACCESS_TOKEN&gt;&#39; }
 };
 
 var req = https.request(options, resp => {
-    let data = '';
-    resp.on('data', d => { data += d; });
-    resp.on('end', () => { console.log(data); });
+    let data = &#39&#39;
+    resp.on('&#39;&#39; d => { data += d; });
+    resp.on(&#39;end&#39; () => { console.log(data); });
 });
 req.end();
-</code></pre>
+</pre>
 
 Data can be rendered with D3. For example a <a href="https://pledru.github.io/strava/simpleBarChart/barChart.html">bar chart</a> renders the above data.
 Only a limited set of activities are retrieved for a given query. Pagination can be used to retrieve all the activities:
