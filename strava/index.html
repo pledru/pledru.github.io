@@ -195,6 +195,7 @@ I tend to forget some of the rides and runs I did within the U.S. Displaying all
 Using a <a href="http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922">U.S. Map</a> and overlaying my activities is pretty straightforward.
 
 Read all the data, but filter out the points not within the U.S:<br>
+</p>
 
 <pre class="code">
 var proj = d3.geo.albersUsa().translate([width/2, height/2]).scale([1000]);
@@ -203,7 +204,6 @@ d3.json("all.json", raw => {
     ...
 });
 </pre>
-</p>
 For mouse events, display the name of the activity and its date and open a window with the activity:</br>
 <pre class="code">
 .on("mousedown", d => {
