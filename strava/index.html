@@ -204,14 +204,14 @@ For mouse events, display the name of the activity and its date and open a windo
     window.open(url, d.name);
 })
 .on("mouseover", d => {
-    elem.transition().duration(200).style("opacity", .9);
-    elem.style('left', d3.event.pageX + 'px')
+    div.transition().duration(200).style("opacity", .9);
+    div.style('left', d3.event.pageX + 'px')
        .style('top', d3.event.pageY - 28 + 'px')
        .style('display', 'inline-block')
        .html(new Date(d.start_date_local).toLocaleDateString() + ': ' + d.name)
 })
 .on("mouseout", d => {
-    elem.transition().duration(500).style("opacity", 0);
+    div.transition().duration(500).style("opacity", 0);
 });
 </pre>
 Here is the result: <a href="map/index.html">Pascal's U.S activities</a>
@@ -285,6 +285,7 @@ We can see that members are mainly in:
 
 <br><br><br>
 
+</div>
 </div>
 </div>
 </div>
