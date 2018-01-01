@@ -260,20 +260,20 @@ And putting all things together: a <a href="dashboard/index.html">dashboard</a> 
 
 <h3>Commute rides...</h3>
 <p>
-Commute activities need to be explicity marked as such by a user. There is no default such as making the activities private by default.
+Commute activities need to be explicity marked as such by a user. There is no default such as making the activities private by default.<br>
 
-Commute rides may be interesting to track for a company wanting to track how these commutes reduce carbon footprint. A company could create a club, then track the rides.
+Commute rides may be interesting to track for a company wanting to track how these commutes reduce carbon footprint. A company could create a club, then track the rides.<br>
 
-Using a mechanism similar to the hidden locations, it should be straightforward to enhance the Strave interface to let the user enters a start (house) and end (office) location and determine if a ride is a commute ride.
+Using a mechanism similar to the hidden locations, it should be straightforward to enhance the Strave interface to let the user enters a start (house) and end (office) location and determine if a ride is a commute ride.<br>
 
-In the meantime, using the Google map API, it is possible to retrieve the location of addresses and for each ride, check if the start and end location of the rides match some given locations.
+In the meantime, using the Google map API, it is possible to retrieve the location of addresses and for each ride, check if the start and end location of the rides match some given locations.<br>
 
 Here is a small <a href="https://github.com/pledru/strava/blob/master/commute/commute.js">program</a> reporting rides which should be marked as commute:
 
 <pre class="code">
 $ node commute.js "ADDRESS..., Boulder, CO" "ADDRESS..., Broomfield, CO"
 </pre>
-<br><br>
+<br>
 It will be straigthforward to use the API to update an activity as a commute.
 </p>
 
