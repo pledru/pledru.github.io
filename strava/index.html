@@ -258,6 +258,25 @@ d3.json("all.json", rawActivities => {
 And putting all things together: a <a href="dashboard/index.html">dashboard</a> example with a drilldown per state (Click on a state or red dot). Would anyone be interested to visualize their data?
 </p>
 
+<h3>Commute rides...</h3>
+<p>
+Commute activities need to be explicity marked as such by a user. There is no default such as making the activities private by default.
+
+Commute rides may be interesting to track for a company wanting to track how these commutes reduce carbon footprint. A company could create a club, then track the rides.
+
+Using a mechanism similar to the hidden locations, it should be straightforward to enhance the Strave interface to let the user enters a start (house) and end (office) location and determine if a ride is a commute ride.
+
+In the meantime, using the Google map API, it is possible to retrieve the location of addresses and for each ride, check if the start and end location of the rides match some given locations.
+
+Here is a small <a href="https://github.com/pledru/strava/blob/master/commute/commute.js">program</a> reporting rides which should be marked as commute:
+
+<pre class="code">
+$ node commute.js "ADDRESS..., Boulder, CO" "ADDRESS..., Broomfield, CO"
+</pre>
+<br><br>
+It will be straigthforward to use the API to update an activity as a commute.
+</p>
+
 <h3>Club members location</h3>
 <p>
 A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
