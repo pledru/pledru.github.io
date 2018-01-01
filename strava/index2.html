@@ -77,6 +77,12 @@ An access token needs to be set up first under a <a href="https://www.strava.com
 Data can be retrieved in JSON format with a HTTPS request. The simple <a href="https://nodejs.org">Node.js</a> program below retrieves the latest's activities of the current user:
 <pre class="code">
 const https = require('https');
+
+var req = https.request(options, resp => {
+    let data = '';
+    resp.on('data', d => { data += d; });
+    resp.on('end', () => { console.log(data); });
+});
 req.end();
 </pre>
 
