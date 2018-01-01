@@ -79,10 +79,11 @@ Data can be retrieved in JSON format with a HTTPS request. The simple <a href="h
 <pre class="code">
 const https = require('https');
 
-var options = {
+const options = {
     host: 'www.strava.com',
     port: 443,
-    host: 'www.strava.com',
+    path: '/api/v3/athlete/activities',
+    method: 'GET',
     headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
 };
 
