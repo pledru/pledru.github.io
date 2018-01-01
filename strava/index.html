@@ -150,7 +150,7 @@ fs.readFile(f[0], 'utf8', (err, contents) => {
 });
 </pre>
 
-A more complex reduce operation can be used to rearrange the data in whatever format is needed. For example this code sample creates a map of the numbers of activities per day and hour of the day:
+A more complex reduce operation can be used to rearrange the data in whatever format is needed. For example this code sample creates a map of the number of activities per day and hour of the day:
 <pre class="code">
     // build a map with the # of activities per day and hour
     let r = data.reduce((acc, x) => {
