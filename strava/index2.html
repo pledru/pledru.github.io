@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+      Creating D3 graphics using the Strava REST API
+  </title>
+  <link rel="stylesheet" href="../application.css">
+
+<meta name="Description" content="using D3.js and the Strava REST API.">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+
+<body id="com">
+
+<div id="not-footer">
+  <div id="header">
+    <div class="clearfix">
+      <h1 class="site-logo"></h1>
+    </div>
+  </div>
+
+  <div id="content-wrapper">
+    <div class="site">
+      <div class="content-header small">
+        <h6 class="breadcrumbs">
+          Creating D3 graphics using the Strava REST API
+        </h6>
+        <div class="search-form small right">
+        </div>
+      </div>
+      <div class="article js-hide-during-search">
+        <h2>Creating D3 graphics using the Strava REST API</h2>
+        <div id="article-platform-nav">
+  <ul>
+    <li class="platform-mac">
+      <a href="#platform-mac" data-platform="mac">
+        mac
+      </a>
+    </li>
+    <li class="platform-windows">
+      <a href="#platform-windows" data-platform="windows">
+        windows
+      </a>
+    </li>
+    <li class="platform-linux">
+      <a href="#platform-linux" data-platform="linux">
+        linux
+      </a>
+    </li>
+    <li class="platform-all">
+      <a href="#platform-all" data-platform="all">
+        all
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+        <div class="article-body content-body wikistyle markdown-format">
+          <div class='intro'>
+
+          </div>
+
+          <div class="intro">
+
+<p>With minimum effort, it is possible to retrieve data programmatically using the Strava REST API.</p>
+
+</div>
+
+<h3>Request an access token</h3>
+<p>
+An access token needs to be set up first under a <a href="https://www.strava.com/settings/profile">user's profile</a>. Initially to retrieve one's own data, just set up the authorization callback domain to localhost. More details on authentication is given on the <a href="https://developers.strava.com/docs/authentication/">Strava Developers</a> page.
+</p>
+
+<h3>API access</h3>
+<p>
+Data can be retrieved in JSON format with a HTTPS request. The simple <a href="https://nodejs.org">Node.js</a> program below retrieves the latest's activities of the current user:
+</p>
+<pre class="code">
+const https = require('https');
+
+var options = {
+    host: 'www.strava.com',
+    port: 443,
+    path: '/api/v3/athlete/activities',
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
+};
+
+var req = https.request(options, resp => {
+    let data = '';
+    resp.on('data', d => { data += d; });
+    resp.on('end', () => { console.log(data); });
+});
+req.end();
+</pre>
+
+Data can be rendered with D3. For example a <a href="https://pledru.github.io/strava/simpleBarChart/barChart.html">bar chart</a> renders the above data.
+Only a limited set of activities are retrieved for a given query. Pagination can be used to retrieve all the activities:
+<pre class="code">
+const https = require('https');
+
+const path = '/api/v3/athlete/activities?page=';
+
+const options = {
+    host: 'www.strava.com',
+    port: 443,
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
+};
+
+let all = [];
+function load(page) {
+  options.path = path + page;
+  var req = https.request(options, function(resp) {
+      let data = '';
+      resp.on('data', d => { data += d; });
+      resp.on('end', () => {
+          let d = JSON.parse(data);
+          if (d.length == 0) {
+              let s = JSON.stringify(all);
+              console.log(s);
+              return;
+          }
+          for (var i = 0; i < d.length; i++) {
+              all.push(d[i]);
+          }
+          load(page+1);
+      });
+  });
+  req.end();
+}
+load(1);
+</pre>
+
+From then on, it is possible for example to extract the total commute distance for a given year (something not directly available from the Strava user interface) using a simple reduce operation:
+
+<pre class="code">
+const fs = require('fs');
+
+let f = process.argv.slice(2);
+fs.readFile(f[0], 'utf8', (err, contents) => {
+    let data = JSON.parse(contents);
+    let distance_commute = data.reduce((acc, x) => {
+        if (x.commute && new Date(x.start_date).getFullYear() == 2017) {
+            acc += parseInt(x.distance);
+        }
+        return acc;
+    }, 0);
+    console.log(distance_commute/1000 +' km');
+});
+</pre>
+
+A more complex reduce operation can be used to rearrange the data in whatever format is needed. For example this code sample creates a map of the numbers of activities per day and hour of the day:
+<pre class="code">
+    // build a map with the # of activities per day and hour
+    let r = data.reduce((acc, x) => {
+        let d = new Date(x.start_date_local);
+        day = d.getUTCDay();
+        hour = d.getUTCHours();
+        if (acc[day] != undefined) {
+            let h = acc[day];
+            if (h[hour] != undefined) {
+                h[hour] = h[hour] + 1;
+            } else {
+                h[hour] = 1;
+            }
+        } else {
+            let h = {};
+            h[hour] = 1;
+            acc[day] = h;
+        }
+        return acc;
+    }, {});
+</pre>
+Which can then be rendered:
+<a href="https://pledru.github.io/strava/dayHourHeatmap/heatmap.html" class="minibutton">View</a>
+<br>
+using a <a href="http://bl.ocks.org/tjdecke/5558084">Day / Hour Heatmap</a>
+
+<h3>Connected...</h3>
+<p>
+While probably a prohibitive approach as it loads one node at a time, this small <a href='https://github.com/pledru/strava/blob/master/connected/connected.js'>program</a> finds the shortest 'distance' between two athletes. It uses a Breadth-First search approach where a queue is used to keep track of which node should be processed next.
+</p>
+<pre class="command-line">
+$ node connected.js 305389 4128933
+<span class="output">
+PATH: 305389,7681395,122858,4128933
+</span>
+</pre>
+
+<h3>U.S Activities</h3>
+<p>
+I tend to forget some of the rides and runs I did within the U.S. Displaying all my activities within the U.S will bring back some memories!!
+
+Using a <a href="http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922">U.S. Map</a> and overlaying my activities is pretty straightforward.
+
+Read all the data, but filter out the points not within the U.S:</br>
+
+<pre class="code">
+var proj = d3.geo.albersUsa().translate([width/2, height/2]).scale([1000]);
+d3.json("all.json", raw => {
+    let data = raw.filter(d => proj([d.start_longitude, d.start_latitude]) != null);
+    ...
+});
+</pre>
+</p>
+For mouse events, display the name of the activity and its date and open a window with the activity:</br>
+<pre class="code">
+.on("mousedown", d => {
+    let url = 'https://www.strava.com/activities/' + d.id
+    window.open(url, d.name);
+})
+.on("mouseover", d => {
+    div.transition().duration(200).style("opacity", .9);
+    div.style('left', d3.event.pageX + 'px')
+       .style('top', d3.event.pageY - 28 + 'px')
+       .style('display', 'inline-block')
+       .html(new Date(d.start_date_local).toLocaleDateString() + ': ' + d.name)
+})
+.on("mouseout", d => {
+    div.transition().duration(500).style("opacity", 0);
+});
+</pre>
+Here is the result: <a href="map/index.html">Pascal's U.S activities</a>
+<br><br>
+So... I only remember one of the activities in the North West (the one in Vancouver was the OpenStack conference, the one in Seattle was visiting Michelle at UW before she decided it rains too much there). One of the two activites in Nebraska was the first day of <a href='https://ragbrai.com/'>RAGBRAI</a> (as I could not recharge my phone after...). The activity in New Mexico was the end of Mike's birthday after surviving the night in Ojo Caliente. One of the two activities in the North East was a quick run with Nicolas in Providence...<br><br>
+A small refinement calculates the <a href="map2/index.html">states</a> the activities are in using the d3 polygon library:
+<pre class="code">
+d3.json("all.json", rawActivities => {
+    let activities = rawActivities.filter(d => {
+        let point = [d.start_longitude, d.start_latitude];
+        return projection(point) != null;
+    });
+
+    d3.json("us-states.json", states => {
+        activities.forEach(p => {
+            states.features.forEach(d => {
+                let point = [p.start_longitude, p.start_latitude];
+                if (d.geometry.type == 'Polygon') {
+                    if (d3.polygonContains(d.geometry.coordinates[0], point)) {
+                        d.properties.visited = true;
+                    }
+                } else if (d.geometry.type == 'MultiPolygon') {
+                    for (var j = 0; j < d.geometry.coordinates.length; j++) {
+                        if (d3.polygonContains(d.geometry.coordinates[j][0], point)) {
+                            d.properties.visited = true;
+                        }
+                    }
+                }
+        });
+    });
+    ...
+});
+</pre>
+
+<h3>Dashboard</h3>
+<p>
+And putting all things together: a <a href="dashboard/index.html">dashboard</a> example with a drilldown per state (Click on a state or red dot). Would anyone be interested to visualize their data?
+</p>
+
+<h3>Commute rides...</h3>
+<p>
+Commute activities need to be explicity marked as such by a user. There is no default such as making the activities private by default.<br><br>
+
+Commute rides may be interesting to track for a company wanting to know how these commutes reduce carbon footprint. A company could create a club, then track the rides.<br><br>
+
+Using a mechanism similar to the hidden locations, it should be straightforward to enhance the Strava interface to let the user enters a start (house) and end (office) location and determine if a ride is a commute ride.<br><br>
+
+In the meantime, using the Google map API, it is possible to retrieve the location of addresses and for each ride, check if the start and end locations of the rides match some given locations.<br><br>
+
+Here is a small <a href="https://github.com/pledru/strava/blob/master/commute/commute.js">program</a> reporting rides which should be marked as commute:
+
+<pre class="code">
+$ node commute.js "HOUSE..., Boulder, CO" "OFFICE..., Broomfield, CO"
+</pre>
+<br>
+It will be straigthforward to use the API to update an activity as a commute.
+</p>
+
+<h3>Club members location</h3>
+<p>
+A small project I worked on was to graph where the members of the Paris-Brest-Paris club live. While this is not an indication of having participating in PBP or planning to, this may indicate an interest in PBP or in randonneuring (or just that Strava is popular in this country).</br>
+We can see that members are mainly in:
+<ul>
+<li>France (not surprisingly)</li>
+<li>Brazil</li>
+<li>United States</li>
+<li>India</li>
+</ul>
+</p>
+<a href="club.html" class="minibutton">View</a>
+
+<br><br><br>
+<div class="fullscreen-overlay"></div>
+</body>
+</html>
+
