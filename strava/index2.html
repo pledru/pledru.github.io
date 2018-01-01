@@ -75,6 +75,7 @@ An access token needs to be set up first under a <a href="https://www.strava.com
 <h3>API access</h3>
 <p>
 Data can be retrieved in JSON format with a HTTPS request. The simple <a href="https://nodejs.org">Node.js</a> program below retrieves the latest's activities of the current user:
+</p>
 <pre class="code">
 const https = require('https');
 
@@ -83,6 +84,7 @@ var options = {
     port: 443,
     path: '/api/v3/athlete/activities',
     method: 'GET',
+    headers: { 'Authorization': 'Bearer ACCESS_TOKEN' }
 };
 
 var req = https.request(options, resp => {
@@ -175,7 +177,6 @@ Which can then be rendered:
 <a href="https://pledru.github.io/strava/dayHourHeatmap/heatmap.html" class="minibutton">View</a>
 <br>
 using a <a href="http://bl.ocks.org/tjdecke/5558084">Day / Hour Heatmap</a>
-</p>
 
 <h3>Connected...</h3>
 <p>
