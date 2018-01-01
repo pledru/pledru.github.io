@@ -80,7 +80,8 @@ Data can be retrieved in JSON format with a HTTPS request. The simple <a href="h
 const https = require('https');
 
 var options = {
-    xxx: 'Auth'
+    host: 'www.strava.com',
+    headers: { }
 };
 
 var req = https.request(options, resp => {
