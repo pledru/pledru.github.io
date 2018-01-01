@@ -81,7 +81,7 @@ const https = require('https');
 
 var options = {
     host: 'www.strava.com',
-    headers: { }
+    headers: { 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;' }
 };
 
 var req = https.request(options, resp => {
