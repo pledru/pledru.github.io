@@ -84,7 +84,7 @@ var options = {
     port: 443,
     path: '/api/v3/athlete/activities',
     method: 'GET',
-    headers: { }
+    headers: 'Authorization': 'Bearer &lt;ACCESS_TOKEN&gt;'
 };
 
 var req = https.request(options, resp => {
