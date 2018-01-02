@@ -144,26 +144,27 @@ fs.readFile(f[0], 'utf8', (err, contents) => {
 </pre>
 
 A more complex reduce operation can be used to rearrange the data in whatever format is needed. For example this code sample creates a map of the number of activities per day and hour of the day:
+
 <pre class="code">
-    // build a map with the # of activities per day and hour
-    let r = data.reduce((acc, x) => {
-        let d = new Date(x.start_date_local);
-        day = d.getUTCDay();
-        hour = d.getUTCHours();
-        if (acc[day] != undefined) {
-            let h = acc[day];
-            if (h[hour] != undefined) {
-                h[hour] = h[hour] + 1;
-            } else {
-                h[hour] = 1;
-            }
+// build a map with the # of activities per day and hour
+let r = data.reduce((acc, x) => {
+    let d = new Date(x.start_date_local);
+    day = d.getUTCDay();
+    hour = d.getUTCHours();
+    if (acc[day] != undefined) {
+        let h = acc[day];
+        if (h[hour] != undefined) {
+            h[hour] = h[hour] + 1;
         } else {
-            let h = {};
             h[hour] = 1;
-            acc[day] = h;
         }
-        return acc;
-    }, {});
+    } else {
+        let h = {};
+        h[hour] = 1;
+        acc[day] = h;
+    }
+    return acc;
+}, {});
 </pre>
 Which can then be rendered:
 <a href="https://pledru.github.io/strava/dayHourHeatmap/heatmap.html" class="minibutton">View</a>
@@ -176,10 +177,9 @@ While probably a prohibitive approach as it loads one node at a time, this small
 </p>
 <pre class="command-line">
 $ node connected.js 305389 4128933
-<span class="output">
-PATH: 305389,7681395,122858,4128933
-</span>
 </pre>
+
+which will return a path such as: <em>PATH: 305389,7681395,122858,4128933</em>
 
 <h3>U.S Activities</h3>
 <p>
