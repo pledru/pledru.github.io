@@ -220,10 +220,13 @@ fs.readFile('all.json', 'utf8', (err, activities) => {
 <p>
 I have rewritten the small example I wrote to check if activities should be marked as a commute using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">the Promise object </a>, async and await.
 
+<br>
 As noted... everywhere, Node.js "suffers" from the callback chain issues. A Promise aleviates this problem. In this example, I want to retrieve the lat/long of 2 addresses, then read a file to match the initial lat/long, then (not in the callback) list the matching entries.
 
+<br>
 Lots of information on the web regarding the Promise object, but I thought this <a href="https://github.com/pledru/strava/blob/master/commute/commute2.js">example</a> of calling a promise inside an initial promise was interesting...
 
+<br>
 Thanks to couple of developers for finding the issue with my initial <a href="https://stackoverflow.com/questions/48157064/promise-inside-a-promise?noredirect=1#comment83293875_48157064">solution</a>.
 </p>
 
