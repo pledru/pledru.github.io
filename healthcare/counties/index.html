@@ -32,7 +32,9 @@ var x = d3.scaleLinear()
     .rangeRound([600, 860]);
 
 var color = d3.scaleThreshold()
-    .domain(d3.range(2, 10))
+    //.domain(d3.range(2, 10))
+    .domain(d3.range(1, 10))
+    //.range(d3.schemeBlues[9]);
     .range(d3.schemeBlues[9]);
 
 var g = svg.append("g")
@@ -70,7 +72,9 @@ g.call(d3.axisBottom(x)
 
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.tsv, "hospitals.tsv", function(d) { hospitals.set(d.id, +d.hospitals); })
+    .defer(d3.tsv, "hospitals.tsv", d => { 
+        hospitals.set(d.id, d.hospitals); 
+    })
     .await(ready);
 
 function ready(error, us) {
@@ -81,7 +85,10 @@ function ready(error, us) {
     .selectAll("path")
     .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
-      .attr("fill", function(d) { return color(d.hospitals = hospitals.get(d.id)); })
+      .attr("fill", function(d) { 
+          d.hospitals = hospitals.get(d.id);
+          return color(d.hospitals = hospitals.get(d.id)); 
+       })
       .attr("d", path)
     .append("title")
       .text(function(d) { return d.hospitals + ""; });
