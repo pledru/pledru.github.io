@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title># of hospitals per state</title>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3-polygon.v1.min.js"></script>
+<style type="text/css">
+
+path:hover { fill-opacity: .7; }
+
+div.tooltip {   
+ 	position: absolute;           
+	text-align: center;           
+	width: 40px;                  
+	height: 30px;                 
+	padding: 2px;             
+	font: 12px sans-serif;        
+	background: white;   
+	border: 0px;      
+	border-radius: 8px;           
+	pointer-events: none;         
+}
+        
+body {
+	font: 11px sans-serif;
+}
+        
+.legend {
+	position:absolute;
+	left:800px;
+	top:350px;
+}
+
+</style>
+<h2># of hospitals per state: <a href='https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals'>Data Set</a></h2>
+</head>
+<body>
+<script type="text/javascript">
+
+var width = 960;
+var height = 500;
+
+var projection = d3.geo.albersUsa()
+   .translate([width/2, height/2])
+   .scale([1000]);
+        
+var path = d3.geo.path().projection(projection);
+
+		
+// Define linear scale for output
+var color = d3.scale.linear()
+    .range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)","rgb(217,91,67)"]);
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width", width)
+	.attr("height", height);
+        
+var div = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+color.domain([0,1,2,3]); // setting the range of the input data
+
+d3.json("us-hospital-states.json", hospitals => {
+    console.log(hospitals);
+
+    d3.json("us-states.json", states => {
+        states.features.forEach(s => {
+            console.log(s.properties.name);
+            for (var i = 0; i < hospitals.length; i++) {
+                if (s.properties.name == hospitals[i].fullname) {
+                    s.properties.size = hospitals[i].hospitals;
+                }
+            }
+        });
+        
+        svg.selectAll("path")
+	    .data(states.features)
+	    .enter()
+	    .append("path")
+	    .attr("d", path)
+	    .style("stroke", "#fff")
+	    .style("stroke-width", "1")
+	    .style("fill", d => {
+                if (d.properties.size < 50) {
+                    return "rgb(213,222,217)";
+                } else if (d.properties.size < 100) {
+                    return "rgb(69,173,168)";
+                } else if (d.properties.size < 150) {
+                    return "rgb(84,36,55)";
+                } else {
+                    return "rgb(217,91,67)";
+                }
+            })
+            .on("mousedown", d => {
+            })
+            .on("mouseover", d => {
+    	        div.transition().duration(200).style("opacity", .9);      
+                div.style('left', d3.event.pageX + 'px')
+                   .style('top', d3.event.pageY - 8 + 'px')
+                   .style('display', 'inline-block')
+                   .html(d.properties.size);
+            })
+            .on("mouseout", d => {
+                div.transition().duration(500).style("opacity", 0);
+            });
+
+    });  
+        
+});
+
+</script>
+</body>
+</html>
+
+
