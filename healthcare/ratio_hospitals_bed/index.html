@@ -89,6 +89,7 @@ function ready(error, us) {
           cc = d.ratio / 30;
 	  if (d.ratio == Infinity) {
               cc = 0;
+              return 'red';
           //} else {
               //cc = 304633 / (d.ratio * 2); // TODO - experiment...
           }
