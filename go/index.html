@@ -136,6 +136,77 @@ func main() {
 }
 </pre>
 
+<h3>JSON parsing</h3>
+<p>
+Go is a typed language. Still supporting a struct within a struct makes it very easy to map a struct to a JSON object. The corresponding Java implementation would have been much longer...
+
+Javascript:
+<pre class="code">
+const fs = require('fs');
+
+fs.readFile('hospitals.json', 'utf8', (err, contents) => {
+    let hospitals = JSON.parse(contents);
+    let data = hospitals.features;
+    let r = data.reduce((acc, x) => {
+        acc[x.properties.STATE] = acc[x.properties.STATE] == undefined ? 1 : acc[x.properties.STATE] + 1
+        return acc;
+    }, {});
+    var states = [];
+    for (k in r) {
+        var v = {name: k, hospitals: r[k]};
+        states.push(v);
+    }
+    console.log(JSON.stringify(states));
+});
+</pre>
+
+Go:
+<pre class="code">
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "encoding/json"
+)
+
+type Hospital struct {
+    Type    string
+    Features []struct {
+        Type string
+        Properties struct {
+            Name string
+            State string
+        }
+    }
+}
+
+type State struct {
+    Name string
+    Hospitals int
+}
+
+func load() {
+    data, _ := ioutil.ReadFile("hospitals.json")
+    var hospitals Hospital
+    m := make(map[string]int)
+    json.Unmarshal(data, &hospitals)
+    for _, v := range hospitals.Features {
+        m[v.Properties.State]++;
+    }
+    var states []State
+    for k, v := range m {
+        states = append(states, State{k, v})
+    }
+    data, _ = json.Marshal(states);
+    fmt.Printf("%s\n", data)
+}
+
+func main() {
+    load()
+}
+</pre>
+
 <div class="fullscreen-overlay"></div>
 </body>
 </html>
