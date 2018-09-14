@@ -358,6 +358,29 @@ func main() {
 }
 </pre>
 
+<h3>Exception handling</h3>
+
+Java:
+<pre class="code">
+public int random() throws Exception {
+    if (l.size() == 0) throw new Exception("Empty list");
+    int index = new Random().nextInt(l.size());
+    return l.get(index);
+}
+</pre>
+
+Go:
+<pre class="code">
+func (s *set) random() (int, error) {
+        if (len(s.l) == 0) {
+            return 0, errors.New("Empty list")
+        }
+        seed := rand.NewSource(time.Now().UnixNano())
+        r := rand.New(seed)
+        return s.l[r.Intn(len(s.l))], nil
+}
+</pre>
+
 </body>
 </html>
 
