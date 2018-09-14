@@ -250,9 +250,9 @@ public class RandomSet {
             // remove it from the map
             m.remove(x);
             // update the map with this new index
+            l.set(v, last);
+            l.remove(l.size() - 1);
             if (x != last) {
-                l.set(v, last);
-                l.remove(l.size() - 1);
                 m.put(last, v); // make sure we don't insert the last element back
             }
             return true;
@@ -323,9 +323,9 @@ func (s *set) remove(x int) bool {
         if v, exist := s.m[x]; exist {
                 last := s.l[len(s.l)-1]
                 delete(s.m, x)
+                s.l[v] = last
+                s.l = s.l[:len(s.l)-1]
                 if (x != last) {
-                    s.l[v] = last
-                    s.l = s.l[:len(s.l)-1]
                     s.m[last] = v
                 }
                 return true
