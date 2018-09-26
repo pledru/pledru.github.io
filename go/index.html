@@ -381,6 +381,76 @@ func (s *set) random() (int, error) {
 }
 </pre>
 
+<h3>Interfaces</h3>
+
+<pre class="code">
+package main
+
+import (
+        "fmt"
+        "io"
+        "os"
+)
+
+func min(a, b int) int {
+        if a < b {
+                return a
+        }
+        return b
+}
+
+type BufferReader struct {
+        buffer []byte
+        size   int
+        pos    *int
+}
+
+func NewBuffer(s string) BufferReader {
+        b := []byte(s)
+        pos := 0
+        return BufferReader{b, len(b), &pos}
+}
+
+func (b BufferReader) Read(p []byte) (n int, err error) {
+        if *b.pos >= b.size {
+                return 0, io.EOF
+        }
+        s := b.size - *b.pos
+        bs := min(len(p), s)
+        copy(p, b.buffer[*b.pos:*b.pos+bs])
+        *b.pos = *b.pos + bs
+        return bs, nil
+}
+
+func load(rc io.Reader) (r string) {
+        var all []byte
+        buf := make([]byte, 10)
+        for {
+                n, err := rc.Read(buf)
+                if n > 0 {
+                        all = append(all, buf[:n]...)
+                }
+                if err == io.EOF {
+                        break
+                }
+                if err != nil {
+                        break
+                }
+        }
+        return string(all)
+}
+
+func main() {
+        file, _ := os.Open("test.go")
+        r := load(file)
+        fmt.Println(r)
+
+        b := NewBuffer("This is a test")
+        r = load(b)
+        fmt.Println(r)
+}
+</pre>
+
 </body>
 </html>
 
