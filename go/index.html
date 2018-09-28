@@ -452,6 +452,162 @@ func main() {
 }
 </pre>
 
+<h3>Pointers</h3>
+
+C:
+<pre class="code">
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node* next;
+};
+
+struct LL {
+    struct Node* head;
+    struct Node* tail;
+};
+
+void add(struct LL* ll, int value) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->value = value;
+    node->next = NULL;
+    if (ll->head == NULL) {
+        ll->head = node;
+        ll->tail = node;
+    } else {
+        ll->tail->next = node;
+        ll->tail = node;
+    }
+}
+
+void print(int value) {
+    printf("%d\n", value);
+}
+
+void traverse(struct LL* ll, void (f)(int)) {
+    struct Node* node;
+    node = ll->head;
+    while (node != NULL) {
+        f(node->value);
+        node = node->next;
+    }
+}
+
+int main() {
+    struct LL ll;
+    ll.head = NULL;
+    ll.tail = NULL;
+    add(&ll, 1);
+    add(&ll, 2);
+    add(&ll, 3);
+    traverse(&ll, print);
+}
+</pre>
+
+Java:
+<pre class="code">
+import java.util.function.*;
+class Node {
+    int value;
+    Node next;
+
+    Node(int value) {
+        this.value = value;
+    }
+}
+
+public class LL {
+    private Node head;
+    private Node tail;
+
+    public void add(int value) {
+        Node node = new Node(value);
+        if (head == null) {
+            head = node;
+            tail = node;
+        } else {
+            tail.next = node;
+            tail = node;
+        }
+    }
+
+    public void add(int[] values) {
+        for (int value : values) {
+            this.add(value);
+        }
+    }
+
+    public void traverse(Consumer c) {
+        Node node = head;
+        while (node != null) {
+            c.accept(node.value);
+            node = node.next;
+        }
+    }
+
+    public static void main(String[] args) {
+        LL ll = new LL();
+        ll.add(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+        ll.traverse(x -> System.out.println(x));
+    }
+
+}
+</pre>
+
+Go:
+<pre class="code">
+package main
+
+import "fmt"
+
+type Node struct {
+        value int
+        next  *Node
+}
+
+type LL struct {
+        head *Node
+        tail *Node
+}
+
+func NewLL() *LL {
+        return &LL{nil, nil}
+}
+
+func (ll *LL) add(value int) {
+        node := &Node{value, nil}
+        if ll.head == nil {
+                ll.head = node
+                ll.tail = node
+        } else {
+                ll.tail.next = node
+                ll.tail = node
+        }
+}
+
+func (ll *LL) addAll(values []int) {
+        for i := 0; i < len(values); i++ {
+                ll.add(values[i])
+        }
+}
+
+func (ll *LL) traverse(f func(value int)) {
+        node := ll.head
+        for node != nil {
+                f(node.value)
+                node = node.next
+        }
+}
+
+func main() {
+        ll := NewLL()
+        ll.addAll([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+        ll.traverse(func(value int) { fmt.Println(value) })
+}
+</pre>
+
 </body>
 </html>
 
