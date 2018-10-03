@@ -506,6 +506,86 @@ int main() {
 }
 </pre>
 
+Python:
+<pre class="code">
+from __future__ import print_function
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class LL:
+    def __init__(self):
+       self.head = None
+       self.tail = None
+
+    def add(self, value):
+        node = Node(value)
+        if self.head is None:
+            self.head = node
+            self.tail = node
+        else:
+            self.tail.next = node
+            self.tail = node
+
+    def addAll(self, values):
+        for value in values:
+            self.add(value)
+
+    def traverse(self, f):
+        node = self.head
+        while node is not None:
+            f(node.value)
+            node = node.next
+
+ll = LL()
+ll.addAll([1, 2, 3, 4, 5, 6])
+ll.traverse(print)
+</pre>
+
+Javascript:
+<pre class="code">
+class Node {
+    constructor(value) {
+        this.value = value
+    }
+}
+
+class LL {
+
+    add(value) {
+        let node = new Node(value)
+        if (this.head == null) {
+            this.head = node
+            this.tail = node
+        } else {
+            this.tail.next = node
+            this.tail = node
+        }
+    }
+
+    addAll(values) {
+        for (let i = 0; i < values.length; i++) {
+            this.add(values[i])
+        }
+    }
+
+    traverse(f) {
+        let node = this.head
+        while (node != null) {
+            f(node.value)
+            node = node.next
+        }
+    }
+
+}
+
+let ll = new LL()
+ll.addAll([1, 2, 3, 4, 5, 6, 7])
+ll.traverse(console.log)
+</pre>
+
 Java:
 <pre class="code">
 import java.util.function.*;
