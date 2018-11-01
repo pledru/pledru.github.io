@@ -255,6 +255,32 @@ req = http.request(options, res => {
 })
 tar.pack('.').pipe(req)
 </pre>
+<br>
+<p>
+... and with one more pipe
+</p>
+<pre class="code">
+let http = require('http')
+let tar = require('tar-fs')
+let zlib = require('zlib')
+
+options = {
+  hostname: 'hostname',
+  port: 80,
+  path: '/shares/export/fs/test.tar.gz',
+  method: 'PUT'
+}
+req = http.request(options, res => {
+  let data = ''
+  res.on('data', chunk => {
+    data += chunk
+  })
+  res.on('end', () => {
+    console.log(data)
+  })
+})
+tar.pack('.').pipe(zlib.createGzip()).pipe(req)
+</pre>
 
 <div class="fullscreen-overlay"></div>
 </body>
