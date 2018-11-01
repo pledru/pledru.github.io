@@ -230,6 +230,32 @@ Lots of information on the web regarding the Promise object, but I thought this 
 Thanks to couple of developers for finding the issue with my initial <a href="https://stackoverflow.com/questions/48157064/promise-inside-a-promise?noredirect=1#comment83293875_48157064">solution</a>.
 </p>
 
+<h3>Streams</h3>
+<p>
+Stream the tar of the current directory to a web server directly:
+</p>
+<pre class="code">
+let fs = require('fs')
+let tar = require('tar-fs')
+
+options = {
+  hostname: 'hostname',
+  port: 80,
+  path: '/shares/export/fs/test.tar',
+  method: 'PUT'
+}
+req = http.request(options, res => {
+  let data = ''
+  res.on('data', chunk => {
+    data += chunk
+  })
+  res.on('end', () => {
+    console.log(data)
+  })
+})
+tar.pack('.').pipe(req)
+</pre>
+
 <div class="fullscreen-overlay"></div>
 </body>
 </html>
