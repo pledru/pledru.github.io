@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pascal's projects</title>
-  <link rel="stylesheet" href="application.css">
+  <title>
+      Python
+  </title>
+  <link rel="stylesheet" href="../application.css">
+
+<meta name="Description" content="JS">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 </head>
 
 <body id="com">
@@ -17,11 +22,14 @@
   <div id="content-wrapper">
     <div class="site">
       <div class="content-header small">
+        <h6 class="breadcrumbs">
+          Go
+        </h6>
         <div class="search-form small right">
         </div>
       </div>
       <div class="article js-hide-during-search">
-        <h2>Pascal's projects</h2>
+        <h2>Go</h2>
         <div id="article-platform-nav">
   <ul>
     <li class="platform-mac">
@@ -48,24 +56,36 @@
 </div>
 
 
-<div class="article-body content-body wikistyle markdown-format">
-<div class='intro'></div>
-<div class="intro">
+        <div class="article-body content-body wikistyle markdown-format">
+          <div class='intro'>
+
+          </div>
+
+          <div class="intro">
+
+<p>Random Python notes...</p>
+
 </div>
 
-<h3><a href="js/index.html">Random JavaScript notes...</a></h3>
+<h3>Popen and pipes</h3>
+<p>
+Get the output of a tar progressively:
+</p>
 
-<h3><a href="go/index.html">Random Go notes...</a></h3>
+<pre class="code">
+import subprocess
 
-<h3><a href="python/index.html">Random Python notes...</a></h3>
+c = ["/usr/bin/tar", "-c7", "/pascal"]
 
-<h3><a href="strava/index.html">Strava API and D3</a></h3>
+p = subprocess.Popen(c, stdout=subprocess.PIPE, bufsize=128)
 
-<h3><a href="rusa/index.html">RUSA Kilometers</a></h3>
+while True:
+  if p.poll() != None:
+    break
+  o = p.stdout.read()
+  print o
+</pre>
 
-<h3><a href="healthcare/index.html">Health Care Data Analysis</a></h3>
-
-<div class="fullscreen-overlay"></div>
 </body>
 </html>
 
