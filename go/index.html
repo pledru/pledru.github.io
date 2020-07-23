@@ -114,6 +114,22 @@ class Integrate {
 }
 </pre>
 
+R:
+<pre class="code">
+integrate <- function(f, a, b) {
+    n = 10;
+    w = (b-a) / n;
+    sum = 0.0;
+    for (i in seq(1, n)) {
+        xi = a + (i-1) * w;
+        sum = sum + w * f(xi);
+    }
+    sum
+}
+
+area = integrate(function(x) { x } , 0, 10)
+</pre>
+
 Go:
 <pre class="code">
 package main
