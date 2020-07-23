@@ -130,6 +130,25 @@ integrate <- function(f, a, b) {
 area = integrate(function(x) { x } , 0, 1)
 </pre>
 
+Rust:
+<pre class="code">
+fn integrate(f: &dyn Fn(f64) -> f64, a: f64, b: f64) -> f64 {
+    const N: i32 = 10;
+    let w = (b-a) / N as f64;
+    let mut sum: f64 = 0.0;
+    for i in 1..N {
+        let xi = a + (i-1) as f64 * w;
+        sum += w + f(xi);
+    }
+    return sum;
+}
+
+fn main() {
+    let r = integrate(&|x| x, 0.0, 1.0);
+    println!("{}", r)
+}
+</pre>
+
 Go:
 <pre class="code">
 package main
