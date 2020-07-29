@@ -91,7 +91,7 @@ From within the package R directory, create a file such as utils.R:
 </p>
 
 <pre class="code">
-#' A sample functionMake ATAC CDS object
+#' A sample function
 #'
 #' This function does not take any input and return a sample message.
 #'
@@ -99,6 +99,27 @@ From within the package R directory, create a file such as utils.R:
 test_it <- function() {
   print("test it...")
 }
+</pre>
+
+<h3>Creating a sample R test within a package</h3>
+<p>
+From within the package tests directory, create a directory called testthat and a file such as testthat.R 
+</p>
+
+<pre class="code">
+library(testthat)
+library(Rtest)
+
+test_check("Rtest")
+</pre>
+
+<pre>
+From within the testthat directory, create a file such as: test_utils.R:
+</pre>
+
+<pre class="code">
+r <- test_it()
+expect_equal(r, "test it...")
 </pre>
 
 <h3>Using a local package</h3>
