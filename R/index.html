@@ -85,6 +85,22 @@ From within the package main directory:
 > check()
 </pre>
 
+<h3>Creating a sample R file and function within a package</h3>
+<p>
+From within the package R directory, create a file such as utils.R:
+</p>
+
+<pre class="code">
+#' A sample functionMake ATAC CDS object
+#'
+#' This function does not take any input and return a sample message.
+#'
+#' @export
+test_it <- function() {
+  print("test it...")
+}
+</pre>
+
 <h3>Using a local package</h3>
 
 <pre class="code">
