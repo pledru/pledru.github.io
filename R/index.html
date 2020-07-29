@@ -122,6 +122,18 @@ r <- test_it()
 expect_equal(r, "test it...")
 </pre>
 
+<h3>Creating a sample data file within a package</h3>
+
+<pre class="code">
+library(devtools)
+diamond_gene <- sample(1000)
+use_data(diamond_gene)
+</pre>
+
+<p>
+This will create the file: data/diamond_gene.rda
+</p>
+
 <h3>Using a local package</h3>
 
 <pre class="code">
