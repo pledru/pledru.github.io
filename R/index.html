@@ -156,6 +156,16 @@ In the R directory, create a file such as: data.R
 "diamond_gene"
 </pre>
 
+<h3>List the content of a package</h3>
+
+<pre class="code">
+> library(Rtest)
+> lsf.str("package:Rtest")
+test_graph : function ()
+test_hashmap : function ()
+test_it : function ()
+</pre>
+
 <h3>Using a local package</h3>
 
 <pre class="code">
