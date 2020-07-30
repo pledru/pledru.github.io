@@ -187,6 +187,21 @@ test_it : function ()
 [1] "test it..."
 </pre>
 
+<h3>Continuous integration with Travis</h3>
+
+<li>
+Register with <a href="https://travis-ci.org/" target="_blank">Travis</a>
+Create a .travis.yml such as:
+</li>
+
+<pre class="code">
+language: r
+r:
+  - release
+  - devel
+r_github_packages: nathan-russell/hashmap
+</pre>
+
 
 </body>
 </html>
