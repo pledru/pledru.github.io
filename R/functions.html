@@ -65,9 +65,46 @@
 
 </div>
 
-<h3>XXX</h3>
+<h3>Function as a parameter</h3>
 
 <pre class="code">
+integrate <- function(f, a, b) {
+  n <- 10
+  w <- (b - a) / n
+  sum <- 0.0
+  for (i in 1:n) {
+      xi <- a + (i - 1) * w
+      sum <- sum + w * f(xi)
+  }
+  sum
+}
+
+linear <- function(x) {
+  x
+}
+
+area <- integrate(linear, 0, 10)
+print(area)
+</pre>
+
+<h3>Inline Function</h3>
+
+<pre class="code">
+integrate <- function(f, a, b) {
+  n <- 10
+  w <- (b - a) / n
+  sum <- 0.0
+  for (i in 1:n) {
+      xi <- a + (i - 1) * w
+      sum <- sum + w * f(xi)
+  }
+  sum
+}
+
+area <- integrate(function(x) {
+  x
+}, 0, 10)
+print(area)
 </pre>
 
 </body>
