@@ -72,8 +72,76 @@
 <h3>Creating a class</h3>
 
 <pre class="code">
-TODO
+gene <- setClass("gene", slots = c(name = "character", sequence = "character"))
+
+setGeneric(
+  "mutate",
+  function(object, mutation) {
+    standardGeneric("mutate")
+  }
+)
+
+setMethod(
+  "mutate",
+  signature("gene"),
+  function(object, mutation) {
+    object@sequence <- mutation
+  }
+)
+
+ay342 <- gene(name = "AY342", sequence = "CATTGAC")
+mutate(ay342, mutation = "CCA")
+print(ay342@sequence)
 </pre>
+
+<p>
+The code above displays CATTGAC as objects are not passed by reference by by value. We can go around this, by returning a new object:
+</p>
+
+<pre class="code">
+gene <- setClass("gene", slots = c(name = "character", sequence = "character"))
+
+setGeneric(
+  "mutate",
+  function(object, mutation) {
+    standardGeneric("mutate")
+  }
+)
+
+setMethod(
+  "mutate",
+  signature("gene"),
+  function(object, mutation) {
+    object@sequence <- mutation
+    object
+  }
+)
+
+ay342 <- gene(name = "AY342", sequence = "CATTGAC")
+ay342 <- mutate(ay342, mutation = "CCA")
+print(ay342@sequence)
+</pre>
+
+<p>
+Except if we use inheritance, it may be easier then to use a simple method:
+</p>
+
+<pre class="code">
+gene <- setClass("gene", slots = c(name = "character", sequence = "character"))
+
+mutate <- function(gene, mutation) {
+    gene@sequence <- mutation
+    gene
+}
+
+ay342 <- gene(name = "AY342", sequence = "CATTGAC")
+ay342 <- mutate(ay342, mutation = "CCA")
+print(ay342@sequence)
+</pre>
+
+<p>
+It is still useful to define a class (setClass) (similar to a C struct) and define objects of this class, but then simply pass the object as a parameter of a standard function.
+</p>
 
 </body>
 </html>
