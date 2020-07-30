@@ -63,15 +63,20 @@
 
           <div class="intro">
 
-<p>Random R notes...</p>
-
-<ul>
-<li><a href="packages.html">Working with packages</a></li>
-<li><a href="style.html">Working in style</a></li>
-<li><a href="objects.html">Working with objects</a></li>
-</ul>
-
 </div>
+
+<p>
+<a href="https://style.tidyverse.org/" target="_blank">The tidyverse Style Guide</a>
+<a href="https://google.github.io/styleguide/Rguide.html" target="_blank">Google’s R Style Guide</a>
+</p>
+
+<h3>Lint</h3>
+
+<pre class="code">
+> install.packages("lintr")
+> library(lintr)
+> lint("/Users/pascal/R/test.R")
+</pre>
 
 </body>
 </html>
