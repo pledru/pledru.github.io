@@ -130,8 +130,8 @@ Except if we use inheritance, it may be easier then to use a simple method:
 gene <- setClass("gene", slots = c(name = "character", sequence = "character"))
 
 mutate <- function(gene, mutation) {
-    gene@sequence <- mutation
-    gene
+  gene@sequence <- mutation
+  gene
 }
 
 ay342 <- gene(name = "AY342", sequence = "CATTGAC")
