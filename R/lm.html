@@ -63,17 +63,32 @@
 
           <div class="intro">
 
-<p>Random R notes...</p>
-
-<ul>
-<li><a href="style.html">Working in style</a></li>
-<li><a href="packages.html">Working with packages</a></li>
-<li><a href="objects.html">Working with objects</a></li>
-<li><a href="functions.html">Working with functions</a></li>
-<li><a href="lm.html">Multiple Linear Regression</a></li>
-</ul>
-
 </div>
+
+<h3>Multiple Linear Regression</h3>
+
+<pre class="code">
+library(tidyverse)
+
+find <- function(weight, age) {
+  # see: https://people.sc.fsu.edu/~jburkardt/datasets/regression/x09.txt
+  data <- read_csv("blood_fat_content.csv")
+  names(data)
+  lm.fit <- lm(data$blood_fat_content ~ data$weight + data$age)
+  summary(lm.fit)
+
+  # equation is bld = 77.9825 + 0.4174 * weight + 5.2166 * age
+
+  coef <- coef(lm.fit)
+
+  r <- coef[1] + coef[2] * weight + coef[3] * age
+  r
+
+}
+
+r <- find(62, 55)
+cat("blood fat content: ", r)
+</pre>
 
 </body>
 </html>
