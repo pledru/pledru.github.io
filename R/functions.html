@@ -107,6 +107,36 @@ area <- integrate(function(x) {
 print(area)
 </pre>
 
+<h3>Returning a Function</h3>
+
+<pre class="code">
+operation <- function(op) {
+
+  add <- function(a, b) {
+      a + b
+  }
+
+  sub <- function(a, b) {
+      a - b
+  }
+
+  if (op == "add") {
+      add
+  } else if (op == "sub") {
+      sub
+  }
+
+}
+
+add <- operation("add")
+sub <- operation("sub")
+none <- operation("none")
+
+add(2, 1)
+sub(2, 1)
+print(none)
+</pre>
+
 </body>
 </html>
 
