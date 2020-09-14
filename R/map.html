@@ -82,6 +82,22 @@ reduce(a, function(acc, v) {
   acc + v * v })
 </pre>
 
+<pre>
+library(Biostrings)
+library(purrr)
+
+dnastring <- DNAString("TTGAAAAAAT")
+
+dnastring1 <- DNAString("TTGAAAAAAT")
+dnastring2 <- DNAString("TTGAAAAAAA")
+l <- list(dnastring1, dnastring2)
+
+r <- map(l, function(x) {
+  length(matchPattern("AAA", x)) != 0})
+
+r <- map(l,  ~  length(matchPattern("AAA", .x)) != 0)
+</pre>
+
 </body>
 </html>
 
