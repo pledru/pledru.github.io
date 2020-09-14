@@ -93,7 +93,7 @@ l <- list(dnastring1, dnastring2)
 r <- map(l, function(x) {
   length(matchPattern("AAA", x)) != 0})
 
-r <- map(l,  ~  length(matchPattern("AAA", .x)) != 0)
+r <- map(l, ~ length(matchPattern("AAA", .x)) != 0)
 </pre>
 
 </body>
