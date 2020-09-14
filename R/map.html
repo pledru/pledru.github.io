@@ -68,13 +68,15 @@
 <pre>
 library(purrr)
 
-a <- c(1,2,3,4,5)
+a <- c(1, 2, 3, 4, 5)
 
 # increment all elements of a vector
-map_dbl(a, function(x) { x + 1 })
+map_dbl(a, function(x) {
+  x + 1 })
 
 # sum of the squares of the elements
-reduce(a, function(acc, v) { acc + v*v })
+reduce(a, function(acc, v) {
+  acc + v * v })
 </pre>
 
 </body>
